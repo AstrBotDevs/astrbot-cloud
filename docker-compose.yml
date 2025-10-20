@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  astrbot-cloud:
+    image: soulter/astrbot-cloud:latest
+    container_name: astrbot-cloud
+    ports:
+      - "8989:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: always
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    networks:
+      - astrbot-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  astrbot-network:
+    driver: bridge
