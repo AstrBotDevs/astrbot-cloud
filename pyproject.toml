@@ -1,0 +1,11 @@
+[project]
+name = "astrbot-cloud"
+version = "0.1.0"
+description = "AstrBot 项目的中心化 API 服务"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.119.0",
+    "httpx>=0.27.0",
+    "uvicorn>=0.32.0",
+]
