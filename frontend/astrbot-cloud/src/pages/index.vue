@@ -520,7 +520,7 @@ onMounted(() => {
                         <!-- Description -->
                         <div
                           class="text-caption"
-                          style="overflow: scroll; color: rgba(var(--v-theme-on-surface), 0.6); line-height: 1.3; margin-bottom: 6px; flex: 1;"
+                          style="overflow: auto; color: rgba(var(--v-theme-on-surface), 0.6); line-height: 1.3; margin-bottom: 6px; flex: 1;"
                         >
                           {{ plugin.desc }}
                         </div>
