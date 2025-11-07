@@ -2,6 +2,11 @@
 import axios from 'axios';
 import { pinyin } from 'pinyin-pro';
 import { ref, computed, onMounted, watch } from 'vue';
+import { useTheme } from 'vuetify';
+
+// 主题
+const theme = useTheme();
+const isDark = computed(() => theme.global.current.value.dark);
 
 // 插件市场数据
 const pluginMarketData = ref([]);
@@ -300,6 +305,11 @@ watch(marketSearch, (newVal) => {
   }, 300);
 });
 
+// 切换主题
+const toggleTheme = () => {
+  theme.global.name.value = isDark.value ? 'light' : 'dark';
+};
+
 // 页面加载时获取数据
 onMounted(() => {
   getPluginMarketData();
@@ -307,7 +317,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-container fluid style="background-color: #f9fafc;">
+  <v-container fluid :class="['page-container', { 'dark-mode': isDark }]">
     <!-- 导航栏 -->
     <nav class="top-nav">
       <div class="nav-container">
@@ -322,6 +332,17 @@ onMounted(() => {
         
         <!-- 导航项 -->
         <div class="nav-items">
+          <v-btn
+            icon
+            variant="text"
+            @click="toggleTheme"
+            size="small"
+          >
+            <v-icon>{{ isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+            <v-tooltip activator="parent" location="bottom">
+              {{ isDark ? '切换到浅色模式' : '切换到深色模式' }}
+            </v-tooltip>
+          </v-btn>
           <a href="https://astrbot.app" target="_blank" class="nav-item">
             <v-icon size="small" class="mr-1">mdi-home</v-icon>
             <span class="d-none d-sm-inline">主页</span>
@@ -344,11 +365,11 @@ onMounted(() => {
 
     <v-row>
       <v-col cols="12">
-        <v-card variant="flat" style="background-color: transparent">
+        <v-card variant="flat" color="transparent">
           <v-card-text style="padding: 0px 12px;">
             <!-- 标题和搜索栏 -->
             <div class="mb-4 d-flex flex-column align-center">
-              <h1 class="text-h4 mb-4 text-center" style="font-weight: 1000; padding-top: 80px;">AstrBot 插件市场</h1>
+              <h1 class="page-title text-h4 mb-4 text-center">AstrBot 插件市场</h1>
               <div style="width: 100%; max-width: 500px; padding: 0 12px;">
                 <v-text-field
                   v-model="marketSearch"
@@ -365,9 +386,9 @@ onMounted(() => {
 
             <!-- 插件市场内容 -->
             <div class="mt-4">
-              <div class="d-flex align-center mb-2" style="justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 0 4px;">
+              <div class="section-header d-flex align-center mb-2" style="justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 0 4px;">
                 <div class="d-flex align-center" style="gap: 6px;">
-                  <h2>所有插件({{ filteredMarketPlugins.length }})</h2>
+                  <h2 class="section-title">所有插件({{ filteredMarketPlugins.length }})</h2>
                   <v-btn icon variant="text" @click="refreshPluginMarket" :loading="refreshingMarket" size="small">
                     <v-icon size="small">mdi-refresh</v-icon>
                   </v-btn>
@@ -433,9 +454,9 @@ onMounted(() => {
 
                 <v-col v-else v-for="plugin in paginatedPlugins" :key="plugin.name" cols="12" md="6" lg="4">
                   <v-card 
-                    class="rounded-lg d-flex flex-column plugin-card" 
+                    class="plugin-card rounded-lg d-flex flex-column" 
                     elevation="0" 
-                    style="height: 12rem; position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);"
+                    style="height: 12rem; position: relative;"
                   >
                     <!-- 推荐标记 -->
                     <v-chip
@@ -596,18 +617,18 @@ onMounted(() => {
       scrollable
     >
       <v-card class="publish-dialog-card">
-        <v-card-title class="text-h5 d-flex align-center pa-4 pa-sm-6" style="color: black;">
+        <v-card-title class="dialog-title text-h5 d-flex align-center pa-4 pa-sm-6">
           <div>
             <div class="text-h6 text-sm-h5 font-weight-bold">发布插件到 AstrBot 插件市场</div>
-            <div class="text-caption mt-1" style="opacity: 0.9;">填写插件信息，自动提交到 GitHub</div>
+            <div class="text-caption mt-1" style="opacity: 0.9;">填写插件信息,自动提交到 GitHub</div>
           </div>
         </v-card-title>
         
         <v-card-text class="pt-6 pb-4" style="max-height: 600px; overflow-y: auto;">
           <v-form v-model="formValid">
             <!-- 基本信息卡片 -->
-            <v-card class="mb-4" elevation="0" style="border: 1px solid rgba(0,0,0,0.1);">
-              <v-card-title class="text-subtitle-1 bg-grey-lighten-4 py-3">
+            <v-card class="form-section mb-4" elevation="0">
+              <v-card-title class="form-section-title text-subtitle-1 py-3">
                 <v-icon size="small" class="mr-2">mdi-information</v-icon>
                 基本信息
               </v-card-title>
@@ -652,8 +673,8 @@ onMounted(() => {
             </v-card>
 
             <!-- 作者信息卡片 -->
-            <v-card class="mb-4" elevation="0" style="border: 1px solid rgba(0,0,0,0.1);">
-              <v-card-title class="text-subtitle-1 bg-grey-lighten-4 py-3">
+            <v-card class="form-section mb-4" elevation="0">
+              <v-card-title class="form-section-title text-subtitle-1 py-3">
                 <v-icon size="small" class="mr-2">mdi-account</v-icon>
                 作者信息
               </v-card-title>
@@ -681,8 +702,8 @@ onMounted(() => {
             </v-card>
 
             <!-- 仓库信息卡片 -->
-            <v-card class="mb-4" elevation="0" style="border: 1px solid rgba(0,0,0,0.1);">
-              <v-card-title class="text-subtitle-1 bg-grey-lighten-4 py-3">
+            <v-card class="form-section mb-4" elevation="0">
+              <v-card-title class="form-section-title text-subtitle-1 py-3">
                 <v-icon size="small" class="mr-2">mdi-github</v-icon>
                 仓库信息
               </v-card-title>
@@ -702,8 +723,8 @@ onMounted(() => {
             </v-card>
 
             <!-- 标签卡片 -->
-            <v-card class="mb-4" elevation="0" style="border: 1px solid rgba(0,0,0,0.1);">
-              <v-card-title class="text-subtitle-1 bg-grey-lighten-4 py-3">
+            <v-card class="form-section mb-4" elevation="0">
+              <v-card-title class="form-section-title text-subtitle-1 py-3">
                 <v-icon size="small" class="mr-2">mdi-tag-multiple</v-icon>
                 插件标签（可选）
               </v-card-title>
@@ -775,7 +796,7 @@ onMounted(() => {
 
         <v-divider></v-divider>
 
-        <v-card-actions class="pa-4 bg-grey-lighten-5">
+        <v-card-actions class="dialog-actions pa-4">
           <v-spacer></v-spacer>
           <v-btn 
             color="grey" 
@@ -806,6 +827,16 @@ onMounted(() => {
 </template>
 
 <style scoped>
+/* 页面容器 */
+.page-container {
+  background-color: #f9fafc;
+  transition: background-color 0.3s ease;
+}
+
+.page-container.dark-mode {
+  background-color: #121212;
+}
+
 /* 导航栏样式 */
 .top-nav {
   position: fixed;
@@ -816,6 +847,13 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   animation: fadeInUp 0.3s ease-in-out;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .top-nav {
+  background: rgba(18, 18, 18, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-container {
@@ -860,9 +898,33 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.dark-mode .nav-item {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 .nav-item:hover {
   background: rgba(0, 0, 0, 0.05);
   color: rgb(var(--v-theme-primary));
+}
+
+.dark-mode .nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 页面标题 */
+.page-title {
+  font-weight: 1000;
+  padding-top: 80px;
+  transition: color 0.3s ease;
+}
+
+/* 区块标题 */
+.section-header {
+  transition: color 0.3s ease;
+}
+
+.section-title {
+  transition: color 0.3s ease;
 }
 
 /* 移动端导航适配 */
@@ -898,6 +960,37 @@ onMounted(() => {
 /* 发布插件对话框样式 */
 .publish-dialog-card {
   overflow: hidden;
+}
+
+.dialog-title {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dialog-actions {
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .dialog-actions {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.form-section {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.dark-mode .form-section {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.form-section-title {
+  background-color: rgba(0, 0, 0, 0.03);
+  transition: background-color 0.3s ease;
+}
+
+.dark-mode .form-section-title {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .publish-dialog-card :deep(.v-card-text) {
@@ -948,10 +1041,21 @@ onMounted(() => {
   cursor: pointer;
   border: 2px solid transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #ffffff;
+}
+
+.dark-mode .plugin-card {
+  background-color: #1e1e1e;
 }
 
 .plugin-card:hover {
   border-color: rgb(var(--v-theme-secondary));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .plugin-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* 推荐标签动画 */
@@ -1017,24 +1121,24 @@ onMounted(() => {
 /* 移动端适配 */
 @media (max-width: 960px) {
   /* 标题适配 */
-  h1.text-h4 {
+  .page-title.text-h4 {
     font-size: 1.75rem !important;
     padding-top: 80px !important;
   }
   
-  h2 {
+  .section-title {
     font-size: 1.25rem !important;
   }
 }
 
 @media (max-width: 600px) {
   /* 标题适配 */
-  h1.text-h4 {
+  .page-title.text-h4 {
     font-size: 1.5rem !important;
     padding-top: 70px !important;
   }
   
-  h2 {
+  .section-title {
     font-size: 1.1rem !important;
   }
   
