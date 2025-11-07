@@ -19,7 +19,6 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
-    '/ExtensionPage.reference': RouteRecordInfo<'/ExtensionPage.reference', '/ExtensionPage/reference', Record<never, never>, Record<never, never>>,
   }
 
   /**
@@ -35,10 +34,6 @@ declare module 'vue-router/auto-routes' {
   export interface _RouteFileInfoMap {
     'src/pages/index.vue': {
       routes: '/'
-      views: never
-    }
-    'src/pages/ExtensionPage.reference.vue': {
-      routes: '/ExtensionPage.reference'
       views: never
     }
   }
